@@ -1,0 +1,70 @@
+definitions:
+  model.JSONFailureResult:
+    properties:
+      code:
+        example: 400
+        type: integer
+      data:
+        type: object
+      error:
+        example: There was an error processing the request
+        type: string
+      id:
+        example: 705e4dcb-3ecd-24f3-3a35-3e926e4bded5
+        type: string
+      stacktrace:
+        type: string
+    type: object
+  model.JSONSuccessResult:
+    properties:
+      code:
+        example: 200
+        type: integer
+      correlation_id:
+        example: 705e4dcb-3ecd-24f3-3a35-3e926e4bded5
+        type: string
+      data:
+        type: object
+      id:
+        example: 123-456-789-abc-def
+        type: string
+      message:
+        example: Success
+        type: string
+    type: object
+info:
+  contact:
+    name: API Support
+  termsOfService: http://swagger.io/terms/
+paths:
+  /v1/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: upload csv file
+      operationId: uploader
+      parameters:
+      - description: query test file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The request was validated and has been processed successfully
+            (sync)
+          schema:
+            $ref: '#/definitions/model.JSONSuccessResult'
+        "404":
+          description: The payload was rejected as invalid
+          schema:
+            $ref: '#/definitions/model.JSONFailureResult'
+        "500":
+          description: An internal error has occurred, most likely due to an uncaught
+            exception
+          schema:
+            $ref: '#/definitions/model.JSONFailureResult'
+      summary: upload csv file
+swagger: "2.0"

@@ -1,0 +1,102 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support"
+        }
+    },
+    "paths": {
+        "/v1/upload": {
+            "post": {
+                "description": "upload csv file",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "upload csv file",
+                "operationId": "uploader",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "query test file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request was validated and has been processed successfully (sync)",
+                        "schema": {
+                            "$ref": "#/definitions/model.JSONSuccessResult"
+                        }
+                    },
+                    "404": {
+                        "description": "The payload was rejected as invalid",
+                        "schema": {
+                            "$ref": "#/definitions/model.JSONFailureResult"
+                        }
+                    },
+                    "500": {
+                        "description": "An internal error has occurred, most likely due to an uncaught exception",
+                        "schema": {
+                            "$ref": "#/definitions/model.JSONFailureResult"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.JSONFailureResult": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "data": {
+                    "type": "object"
+                },
+                "error": {
+                    "type": "string",
+                    "example": "There was an error processing the request"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "705e4dcb-3ecd-24f3-3a35-3e926e4bded5"
+                },
+                "stacktrace": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.JSONSuccessResult": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "correlation_id": {
+                    "type": "string",
+                    "example": "705e4dcb-3ecd-24f3-3a35-3e926e4bded5"
+                },
+                "data": {
+                    "type": "object"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "123-456-789-abc-def"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        }
+    }
+}

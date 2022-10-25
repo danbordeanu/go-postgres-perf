@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  database:
+    image: timescale/timescaledb-ha:pg14-latest
+    environment:
+      - POSTGRES_PASSWORD=rdsdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./utils/sql/init:/docker-entrypoint-initdb.d
+    ports:
+      - '5432:5432'
+    networks:
+      - pgperf_network
+    restart: always
+  jaeger:
+    image: jaegertracing/all-in-one:1.22
+    environment:
+     - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14250:14250"
+      - "14268:14268"
+      - "14269:14269"
+      - "9411:9411"
+    networks:
+      - pgperf_network
+  api:
+    build:
+      context: '.'
+      dockerfile: 'Dockerfile'
+    environment:
+      - POSTGRESQL_HOST=database
+      - POSTGRESQL_PORT=5432
+      - POSTGRESQL_USER=postgres
+      - POSTGRESQL_PASSWORD=rdsdb
+      - JAEGER_ENGINE_NAME=http://jaeger:14268/api/traces
+      - WORKERS=4
+    ports:
+      - '8080:8080'
+    depends_on:
+      - 'database'
+    networks:
+      - pgperf_network
+    restart: always
+  
+volumes:
+  postgres_data:
+
+networks:
+  pgperf_network:
+    name: pgperf_network
